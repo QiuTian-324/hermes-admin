@@ -20,8 +20,8 @@ const router = useRouter()
 const { query } = useRoute()
 
 const loginForm = reactive({
-  username: 'admin',
-  password: '123456',
+  username: '',
+  password: '',
 })
 
 initLoginInfo()
@@ -107,7 +107,7 @@ async function handleLogin() {
           v-model:value="loginForm.username"
           class="h-[50px] items-center pl-2"
           autofocus
-          placeholder="test@qq.com"
+          placeholder="请输入邮箱号"
           :maxlength="20"
         />
         <NInput
@@ -115,7 +115,7 @@ async function handleLogin() {
           class="h-[50px] items-center pl-2"
           type="password"
           show-password-on="mousedown"
-          placeholder="11111"
+          placeholder="请输入密码"
           :maxlength="20"
           @keydown.enter="handleLogin"
         />

@@ -91,4 +91,6 @@ export default {
   getPages: () => request.get('/page/list'),
   saveOrUpdatePage: data => request.post('/page', data),
   deletePage: (data = []) => request.delete('/page', { data }),
+  // 上传文件
+  uploadFile:formData=> request.post("/upload",formData)
 }

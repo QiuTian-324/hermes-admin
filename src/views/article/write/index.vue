@@ -1,22 +1,23 @@
 <script setup>
 import { h, nextTick, onActivated, onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import { NButton, NDynamicTags, NForm, NFormItem, NInput, NRadio, NRadioGroup, NSelect, NSpace, NSwitch, NTag } from 'naive-ui'
 import { MdEditor } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
-
+import { Base64 } from 'js-base64'
 import CommonPage from '@/components/common/CommonPage.vue'
 import CrudModal from '@/components/crud/CrudModal.vue'
 import UploadOne from '@/components//UploadOne.vue'
 
 import { articleTypeOptions } from '@/assets/config'
-import {useTagStore, useThemeStore} from '@/store'
+import {useAuthStore, useTagStore, useThemeStore} from '@/store'
 import api from '@/api'
+import axios from "axios";
 
 defineOptions({ name: '发布文章' })
 
 const route = useRoute()
-// const router = useRouter()
+const router = useRouter()
 const tagStore = useTagStore()
 const themeStore = useThemeStore()
 const categoryOptions = ref([]) // 分类选项
@@ -33,6 +34,24 @@ onMounted(async () => {
 onActivated(async () => {
   fetchData()
 })
+
+const { token } = useAuthStore()
+const onUploadImg = async (files, callback) => {
+
+    try {
+        const form = new FormData();
+        form.append('file', files[0]);
+        const res = await axios.post('/api/upload', form, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        callback([res].map((item) => item.data.data));
+        return res
+    }catch (e) {
+        return e
+    }
+};
 
 async function fetchData() {
   getArticleInfo()
@@ -78,8 +97,10 @@ async function getArticleInfo() {
   window.$loadingBar?.start()
   try {
     const resp = await api.getArticleById(id)
+    console.log(resp)
     const { category, tags } = resp.data
     formModel.value = resp.data
+    formModel.value.content =Base64.decode(formModel.value.content)
     formModel.value.tag_names = tags.map(e => e.name)
     formModel.value.category_name = category.name
     window.$loadingBar?.finish()
@@ -112,12 +133,13 @@ async function handleSave() {
       btnLoading.value = true
       // $message.loading('正在保存...')
       try {
+        formModel.value.content = Base64.encode(formModel.value.content)
         await api.saveOrUpdateArticle(formModel.value)
         modalVisible.value = false
         $message.success('操作成功!')
         // 关闭当前标签, 并跳转回文章列表
         tagStore.removeTag(route.path)
-        // await router.replace({ path: '/article/list', query: { needRefresh: true } })
+        await router.replace({ path: '/article/list', query: { needRefresh: true } })
       }
       catch (err) {
         console.error(err)
@@ -154,6 +176,7 @@ function renderTag(tag, index) {
     { default: () => tag },
   )
 }
+
 </script>
 
 <template>
@@ -180,7 +203,8 @@ function renderTag(tag, index) {
     </div>
 
     <!-- TODO: 文件上传 -->
-    <MdEditor v-model="formModel.content" :auto-focus="true" :theme="themeStore.darkMode?'dark':'light'"  style="height: calc(100vh - 245px)" />
+    <MdEditor v-model="formModel.content" previewTheme='github' codeTheme="qtcreator" :auto-focus="true" @onUploadImg="onUploadImg" :theme="themeStore.darkMode?'dark':'light'"  style="height: calc(100vh - 245px)" >
+    </MdEditor>
 
     <CrudModal
       v-model:visible="modalVisible"

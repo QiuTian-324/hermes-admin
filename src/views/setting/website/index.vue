@@ -12,18 +12,18 @@ defineOptions({ name: '网站管理' })
 const formRef = ref(null)
 const form = ref({
   website_avatar: '',
-  website_name: '阵、雨的个人博客',
-  website_author: '阵、雨',
-  website_intro: '往事随风而去',
-  website_notice: '博客后端基于 gin、gorm 开发\n博客前端基于 Vue3、TS、NaiveUI 开发\n努力开发中...冲冲冲！加油！',
+  website_name: 'Akita Planet',
+  website_author: 'Akita',
+  website_intro: '足够用心，才足够特别',
+  website_notice: '欢迎来到Akita Planet，项目还在开发中...',
   website_createtime: '2023-12-27 22:40:22',
-  website_record: '鲁ICP备2022040119号',
-  qq: '123456789',
-  github: 'https://github.com/szluyu99',
-  gitee: 'https://gitee.com/szluyu99',
-  tourist_avatar: 'https://cdn.hahacode.cn/16815451239215dc82548dcadcd578a5bbc8d5deaa.jpg',
-  user_avatar: 'https://cdn.hahacode.cn/2299fc4d14c94e6183b082973b35855d.png',
-  article_cover: 'https://cdn.hahacode.cn/1679461519cc592408198d67faf1290ff8969dc614.png',
+  website_record: '湘ICP备2024046164',
+  qq: '1240092443',
+  github: 'https://github.com/QiuTian-324',
+  gitee: 'https://gitee.com/QTAkita',
+  tourist_avatar: 'http://cdn.akita324.top/17077488317953f0f62d8c558064e27cf3a395d9c4.webp',
+  user_avatar: 'http://cdn.akita324.top/1707893291760bdb00362ba376ce718ede096122c0.jpg',
+  article_cover: 'http://cdn.akita324.top/1707882871517fdef87ba769085bfade8568a91747.webp',
   is_comment_review: 1,
   is_message_review: 1,
   // is_email_notice: 0,
@@ -62,7 +62,7 @@ function handleSave() {
 </script>
 
 <template>
-  <CommonPage :show-header="false" show-footer>
+  <CommonPage :show-header="true" show-footer>
     <NTabs type="line" animated>
       <NTabPane name="website" tab="网站信息">
         <NForm
